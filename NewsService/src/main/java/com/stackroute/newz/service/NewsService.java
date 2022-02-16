@@ -14,7 +14,7 @@ public interface NewsService {
 
 	public boolean addNews(News news);
 
-	public boolean deleteNews(String userId, int newsId);
+	public boolean deleteNews(String userId, Integer newsId); //Did int to Integer
 
 	public boolean deleteAllNews(String userId) throws NewsNotFoundException;
 

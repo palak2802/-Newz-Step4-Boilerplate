@@ -2,6 +2,9 @@ package com.stackroute.newz.model;
 
 import java.time.LocalDateTime;
 
+import org.springframework.data.mongodb.core.mapping.Document;
+
+@Document
 public class Reminder {
 
 	/*
@@ -12,21 +15,38 @@ public class Reminder {
 	 * always initialized with the system date.
 	 */
 	
+	private String reminderId;
+	private LocalDateTime schedule;
+	
+	public Reminder() {
+		super();
+		this.schedule = LocalDateTime.now();
+	}
+	
+	public Reminder(String reminderId, LocalDateTime schedule) {
+		super();
+		this.reminderId = reminderId;
+	}
+
 	public String getReminderId() {
-		return null;
+		return reminderId;
 	}
 
 	public void setReminderId(String reminderId) {
-
+		this.reminderId = reminderId;
 	}
 
 	public LocalDateTime getSchedule() {
-		return null;
+		return schedule;
 	}
 
 	public void setSchedule() {
-
+		this.schedule = LocalDateTime.now();
 	}
 
-
+	@Override
+	public String toString() {
+		return "Reminder [reminderId=" + reminderId + ", schedule=" + schedule + "]";
+	}
+	
 }

@@ -1,6 +1,24 @@
 package com.stackroute.newz.controller;
 
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.stackroute.newz.model.NewsSource;
 import com.stackroute.newz.service.NewsSourceService;
+import com.stackroute.newz.util.exception.NewsSourceNotFoundException;
 
 /*
  * As in this assignment, we are working with creating RESTful web service, hence annotate
@@ -10,7 +28,8 @@ import com.stackroute.newz.service.NewsSourceService;
  * format. Starting from Spring 4 and above, we can use @RestController annotation which 
  * is equivalent to using @Controller and @ResposeBody annotation
  */
-
+@RestController
+@RequestMapping("/api/v1/newssource")
 public class NewsSourceController {
 
 	/*
@@ -18,11 +37,15 @@ public class NewsSourceController {
 	 * autowiring) Please note that we should not create any object using the new
 	 * keyword
 	 */
-	
+	@Autowired
+	private NewsSourceService newsSourceService;
+	@Autowired
 	public NewsSourceController(NewsSourceService newsSourceService) {
-	
+		this.newsSourceService = newsSourceService;
 	}
 	
+	private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
 
 	/*
 	 * Define a handler method which will create a specific newssource by reading the
@@ -34,6 +57,18 @@ public class NewsSourceController {
 	 * 
 	 * This handler method should map to the URL "/api/v1/newssource" using HTTP POST method
 	 */
+	@PostMapping
+	public ResponseEntity<NewsSource> createNewsSource(@RequestBody NewsSource newsSource){
+		for(NewsSource allNewsSource: newsSourceService.getAllNewsSourceByUserId(newsSource.getNewsSourceName())) {
+			if(allNewsSource.getNewsSourceId() == allNewsSource.getNewsSourceId()) {
+				logger.info("In controller - {}", "News ID "+ allNewsSource.getNewsSourceId() + " already exists.");
+				return new ResponseEntity<NewsSource>(HttpStatus.CONFLICT);
+			}
+		}
+		newsSourceService.addNewsSource(newsSource);
+		logger.info("In controller - {}", "News Source created: " +newsSource);
+		return new ResponseEntity<NewsSource>(newsSource, HttpStatus.CREATED);
+	}
 
 
 	/*
@@ -49,7 +84,20 @@ public class NewsSourceController {
 	 * without {}.
 	 * 
 	 */
-	
+	@DeleteMapping("/{newssourceId}")
+	public ResponseEntity<NewsSource> deleteNewsSource(@PathVariable("newssourceId") Integer newssourceId) throws NewsSourceNotFoundException{
+			NewsSource getNewsSource = newsSourceService.getNewsSourceById(newssourceId.toString(), newssourceId);
+			if(getNewsSource != null) {
+				newsSourceService.deleteNewsSource(newssourceId);
+				logger.info("In controller - {}", "News Source deleted for Id - " +newssourceId);
+				return new ResponseEntity<NewsSource>(HttpStatus.OK);
+			}
+			else {
+			logger.info("In controller - {}", "News not found for news Id - " +newssourceId);
+			return new ResponseEntity<NewsSource>(HttpStatus.NOT_FOUND);
+			}
+	}
+
 	/*
 	 * Define a handler method which will update a specific newssource by reading the
 	 * Serialized object from request body and save the updated newssource details in a
@@ -63,6 +111,18 @@ public class NewsSourceController {
 	 * without {}.
 	 * 
 	 */
+	@PutMapping("/{newssourceId}")
+	public ResponseEntity<NewsSource> updateNewsSource(@PathVariable("newssourceId") Integer newssourceId, @RequestBody NewsSource newsSource) throws NewsSourceNotFoundException {
+			NewsSource getNewsSource = newsSourceService.getNewsSourceById(newssourceId.toString(), newssourceId);
+			if(getNewsSource != null) {
+				NewsSource updateNewsSource = newsSourceService.updateNewsSource(newsSource, newssourceId);
+				logger.info("In controller - {}", "News updated for news Id - " +newssourceId + " is: " +updateNewsSource);
+				return new ResponseEntity<NewsSource>(updateNewsSource, HttpStatus.OK);
+			}else {
+				logger.info("In controller - {}", "News Source not found for Id - " +newssourceId);
+				return new ResponseEntity<NewsSource>(HttpStatus.NOT_FOUND);
+			}
+	}
 	
 	/*
 	 * Define a handler method which will get us the specific newssource by a userId.
@@ -76,6 +136,18 @@ public class NewsSourceController {
 	 * without {} and "newssourceId" should be replaced by a valid newsId without {}.
 	 * 
 	 */
+	@GetMapping("/{userId}/{newssourceId}")
+	public ResponseEntity<NewsSource> getNewsSourceById(@PathVariable("userId") String userId, @PathVariable("newssourceId") Integer newssourceId) throws NewsSourceNotFoundException{
+		NewsSource newsSourceById = newsSourceService.getNewsSourceById(userId, newssourceId);
+		if(newsSourceById == null) {
+			logger.info("In controller - {}", "News Source ID "+newssourceId+ " not Found.");
+			return new ResponseEntity<NewsSource>(HttpStatus.NOT_FOUND);
+		}
+		else {
+			logger.info("In controller - {}", "The news Source for Id - " +newssourceId+ " is: "+newsSourceById);
+			return new ResponseEntity<NewsSource>(newsSourceById, HttpStatus.OK);
+		}
+	}
 	
 	/*
 	 * Define a handler method which will show details of all newssource created by specific 
@@ -87,6 +159,10 @@ public class NewsSourceController {
 	 * where "userId" should be replaced by a valid userId without {}.
 	 * 
 	 */
-
-    
+	@GetMapping("/{userId}")
+	public ResponseEntity<List<NewsSource>> getAllNewsSource(@PathVariable("userId") String userId){
+		List<NewsSource> allNewsSource = newsSourceService.getAllNewsSourceByUserId(userId);
+		logger.info("In controller - {}", "List of all news Source By User Id: "+userId+ "is: "+allNewsSource);
+		return new ResponseEntity<List<NewsSource>>(allNewsSource, HttpStatus.OK);
+	}
 }

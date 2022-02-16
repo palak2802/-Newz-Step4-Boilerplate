@@ -1,9 +1,12 @@
 package com.stackroute.newz.model;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
+@Document
 public class News {
-
 	
 	/*
 	 * This class should have ten fields
@@ -13,86 +16,121 @@ public class News {
 	 * The value of publishedAt should not be accepted from the user but should be
 	 * always initialized with the system date.
 	 */
-
-	public Reminder getReminder() {
-		return null;
+	@Id
+	private Integer newsId;
+	private String title;
+	private String author;
+	private String description;
+	private LocalDateTime publishedAt;
+	private String content;
+	private String url;
+	private String urlToImage;
+	private Reminder reminder;
+	private NewsSource newsSource;
+	
+	public News() {
+		this.publishedAt = LocalDateTime.now();
+	}
+	
+	public News(Integer newsId, String title, String author, String description, LocalDateTime publishedAt,
+			String content, String url, String urlToImage, Reminder reminder, NewsSource newsSource) {
+		super();
+		this.newsId = newsId;
+		this.title = title;
+		this.author = author;
+		this.description = description;
+		this.content = content;
+		this.url = url;
+		this.urlToImage = urlToImage;
+		this.reminder = reminder;
+		this.newsSource = newsSource;
 	}
 
-	public void setReminder(Reminder reminder) {
-		
+	public Integer getNewsId() {
+		return newsId;
 	}
 
-	public int getNewsId() {
-		return 0;
-	}
-
-	public void setNewsId(int newsId) {
-		
+	public void setNewsId(Integer newsId) {
+		this.newsId = newsId;
 	}
 
 	public String getTitle() {
-		return null;
+		return title;
 	}
 
 	public void setTitle(String title) {
-
+		this.title = title;
 	}
 
 	public String getAuthor() {
-		return null;
+		return author;
 	}
 
 	public void setAuthor(String author) {
-
+		this.author = author;
 	}
 
 	public String getDescription() {
-		return null;
+		return description;
 	}
 
 	public void setDescription(String description) {
-		
+		this.description = description;
 	}
 
-	public Date getPublishedAt() {
-		return null;
+	public LocalDateTime getPublishedAt() {
+		return publishedAt;
 	}
 
 	public void setPublishedAt() {
-		
+		this.publishedAt = LocalDateTime.now();
 	}
 
 	public String getContent() {
-		return null;
+		return content;
 	}
 
 	public void setContent(String content) {
-		
+		this.content = content;
 	}
 
 	public String getUrl() {
-		return null;
+		return url;
 	}
 
 	public void setUrl(String url) {
-		
+		this.url = url;
 	}
 
 	public String getUrlToImage() {
-		return null;
+		return urlToImage;
 	}
 
 	public void setUrlToImage(String urlToImage) {
-		
+		this.urlToImage = urlToImage;
+	}
+
+	public Reminder getReminder() {
+		return reminder;
+	}
+
+	public void setReminder(Reminder reminder) {
+		this.reminder = reminder;
 	}
 
 	public NewsSource getNewsSource() {
-		return null;
+		return newsSource;
 	}
 
 	public void setNewssource(NewsSource newsSource) {
-
+		this.newsSource = newsSource;
 	}
 
-
+	@Override
+	public String toString() {
+		return "News [newsId=" + newsId + ", title=" + title + ", author=" + author + ", description=" + description
+				+ ", publishedAt=" + publishedAt + ", content=" + content + ", url=" + url + ", urlToImage="
+				+ urlToImage + ", reminder=" + reminder + ", newsSource=" + newsSource + "]";
+	}
+	
 }
