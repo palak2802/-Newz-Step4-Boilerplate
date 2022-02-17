@@ -30,8 +30,11 @@ public class NewsServiceImpl implements NewsService {
 	 * object using the new keyword.
 	 */
 	
-	@Autowired
 	private NewsRepository newsRepo;
+	
+	public NewsServiceImpl() {
+	}
+	
 	@Autowired
 	public NewsServiceImpl(NewsRepository newsRepository) {
 		this.newsRepo = newsRepository;

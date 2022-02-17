@@ -5,6 +5,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -40,8 +41,7 @@ public class NewsController {
 	 */
 	@Autowired
 	private NewsService newsService;
-	@Autowired
-	private UserNews userNews;
+	
 	@Autowired
 	public NewsController(NewsService newsService) {
 		this.newsService = newsService;
@@ -61,6 +61,7 @@ public class NewsController {
 	 */
 	@PostMapping
 	public ResponseEntity<News> createNews(@RequestBody News news){
+		UserNews userNews = new UserNews();
 		for(News allNews: newsService.getAllNewsByUserId(userNews.getUserId())) {
 			if(allNews.getNewsId() == news.getNewsId()) {
 				logger.info("In controller - {}", "News ID "+ news.getNewsId() + " already exists.");

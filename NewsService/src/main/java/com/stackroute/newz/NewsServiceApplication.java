@@ -6,6 +6,8 @@ import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 
+import com.stackroute.newz.model.UserNews;
+
 
 /*
  * The @SpringBootApplication annotation is equivalent to using @Configuration, @EnableAutoConfiguration 
@@ -13,7 +15,6 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
  */
 
 @SpringBootApplication
-@EnableMongoRepositories
 public class NewsServiceApplication {
   
 	/*
