@@ -84,7 +84,6 @@ public class NewsServiceImplTest {
         
     }
 
-
     @Test
     public void addNewsSuccess() throws NewsAlreadyExistsException {
         when(newsRepository.insert((UserNews) any())).thenReturn(userNews);
@@ -130,8 +129,6 @@ public class NewsServiceImplTest {
         assertEquals(true, flag);
 
     }
-
-    
 
     @Test
     public void deleteAllNewsFailure() throws NewsNotFoundException {

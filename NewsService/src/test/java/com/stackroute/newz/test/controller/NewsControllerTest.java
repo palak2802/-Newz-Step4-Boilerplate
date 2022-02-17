@@ -107,7 +107,7 @@ class NewsControllerTest {
 
 
     @Test
-    public void addNewsFailure() throws Exception {
+    public void addNewsFailure() throws Exception {	//fail
         when(newsService.addNews(any())).thenReturn(false);
         mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/news").contentType(MediaType.APPLICATION_JSON)
                 .content(asJsonString(news)))
@@ -118,7 +118,7 @@ class NewsControllerTest {
 
 
     @Test
-    public void deleteNewsSuccess() throws Exception {
+    public void deleteNewsSuccess() throws Exception {	//fail
 
         when(newsService.deleteNews("Becky123", news.getNewsId())).thenReturn(true);
         mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/news/Becky123/1")
@@ -151,7 +151,7 @@ class NewsControllerTest {
     }
 
     @Test
-    public void deleteAllNewsFailure() throws Exception {
+    public void deleteAllNewsFailure() throws Exception {	//error
 
         when(newsService.deleteAllNews("Becky123")).thenThrow(NewsNotFoundException.class);
         mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/news/Becky123")
@@ -163,7 +163,7 @@ class NewsControllerTest {
 
 
     @Test
-    public void updateNewsSuccess() throws Exception {
+    public void updateNewsSuccess() throws Exception {	//fail
 
         when(newsService.updateNews(any(), eq(news.getNewsId()), eq("Becky123"))).thenReturn(news);
         news.setContent("Mumbai Indians vs RCB match scheduled  for 6 PM");
@@ -200,7 +200,7 @@ class NewsControllerTest {
 
 
     @Test
-    public void getNewsByIdFailure() throws Exception {
+    public void getNewsByIdFailure() throws Exception {	//error
 
         when(newsService.getNewsByNewsId("Becky123", 1)).thenThrow(NewsNotFoundException.class);
         mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/news/Becky123/1")
