@@ -40,10 +40,16 @@ public class NewsServiceImpl implements NewsService {
 	/*
 	 * This method should be used to save a new news.
 	 */
+	@SuppressWarnings("unlikely-arg-type")
 	@Override
 	public boolean addNews(News news){
-		if(newsRepo.existsById(news.getNewsId().toString()) == false) {
-			newsRepo.insert(news);
+		UserNews userNews = new UserNews();
+		List<News> newsList = userNews.getNewslist();
+		News newsWithId = newsList.stream().filter(id -> news.getNewsId().equals(id)).findAny().orElse(null);
+		if(newsWithId == null) {
+			newsList.add(news);
+			userNews.setNewslist(newsList);
+			newsRepo.save(userNews);
 			return true;
 		}
 		return false;
@@ -51,9 +57,13 @@ public class NewsServiceImpl implements NewsService {
 
 	/* This method should be used to delete an existing news. */
 	
-	public boolean deleteNews(String userId, Integer newsId) {
-		if(newsRepo.existsById(userId) == true && newsRepo.existsById(newsId.toString()) == true) {
-			newsRepo.deleteById(userId);
+	@SuppressWarnings("unlikely-arg-type")
+	public boolean deleteNews(String userId, int newsId) {
+		UserNews userNews = newsRepo.findById(userId).get();
+		List<News> newsList = userNews.getNewslist();
+		News newsWithId = newsList.stream().filter(id -> Integer.valueOf(newsId).equals(id)).findAny().orElse(null);
+		if(newsWithId != null) {
+			newsRepo.deleteById(userNews.getUserId());
 			return true;
 		}
 		return false;
@@ -62,9 +72,10 @@ public class NewsServiceImpl implements NewsService {
 	/* This method should be used to delete all news for a  specific userId. */
 	
 	public boolean deleteAllNews(String userId) throws NewsNotFoundException {
-		Optional<News> allNewsToDelete = newsRepo.findById(userId);
-		if(allNewsToDelete.isPresent()) {
-			newsRepo.delete(allNewsToDelete.get());
+		UserNews userNews = newsRepo.findById(userId).get();
+		List<News> newsList = userNews.getNewslist();
+		if(newsList != null) {
+			newsRepo.delete(userNews);
 			return true;
 		}
 		throw new NewsNotFoundException("Can not Delete the News. The news with user ID: "+userId+ " does not exists in the database.");
@@ -74,17 +85,23 @@ public class NewsServiceImpl implements NewsService {
 	 * This method should be used to update a existing news.
 	 */
 
+	@SuppressWarnings("unlikely-arg-type")
 	public News updateNews(News news, int newsId, String userId) throws NewsNotFoundException {
-		if(newsRepo.existsById(userId) == true) {
-			Optional<News> newsToUpdate = newsRepo.findById(userId);
-			newsToUpdate.get().setAuthor(news.getAuthor());
-			newsToUpdate.get().setContent(news.getContent());
-			newsToUpdate.get().setDescription(news.getDescription());
-			newsToUpdate.get().setTitle(news.getTitle());
-			newsToUpdate.get().setUrl(news.getUrl());
-			newsToUpdate.get().setUrlToImage(news.getUrlToImage());
-			newsToUpdate.get().setReminder(news.getReminder());
-			return newsRepo.save(newsToUpdate.get());
+		UserNews userNews = newsRepo.findById(userId).get();
+		List<News> newsList = userNews.getNewslist();
+		News newsWithId = newsList.stream().filter(id -> Integer.valueOf(newsId).equals(id)).findAny().orElse(null);
+		if(newsWithId != null) {
+			newsWithId.setAuthor(news.getAuthor());
+			newsWithId.setContent(news.getContent());
+			newsWithId.setDescription(news.getDescription());
+			newsWithId.setTitle(news.getTitle());
+			newsWithId.setUrl(news.getUrl());
+			newsWithId.setUrlToImage(news.getUrlToImage());
+			newsWithId.setReminder(news.getReminder());
+			newsList.add(newsWithId);
+			userNews.setNewslist(newsList);
+			newsRepo.save(userNews);
+			return newsWithId;
 		}
 		throw new NewsNotFoundException("Can not Update the News. The news with user ID: "+userId+ " and news ID: "+newsId+" does not exists in the database.");
 	}
@@ -94,9 +111,11 @@ public class NewsServiceImpl implements NewsService {
 	 */
 
 	public News getNewsByNewsId(String userId, int newsId) throws NewsNotFoundException {
-		if(newsRepo.existsById(userId) == true) {
-			Optional<News> news = newsRepo.findById(userId);
-			return news.get();
+		UserNews userNews = newsRepo.findById(userId).get();
+		List<News> newsList = userNews.getNewslist();
+		News newsWithId = newsList.stream().filter(id -> Integer.valueOf(newsId).equals(id)).findAny().orElse(null);
+		if(newsWithId != null) {
+			return newsWithId;
 		}
 		throw new NewsNotFoundException("Can not Retrieve the News. The news with user ID: "+userId+ " and news  ID: "+newsId +" does not exists in the database.");
 	}
