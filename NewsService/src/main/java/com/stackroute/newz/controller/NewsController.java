@@ -38,7 +38,7 @@ public class NewsController {
 	 * keyword
 	 */
 	@Autowired
-	private final NewsService newsService;
+	private NewsService newsService;
 	
 	@Autowired
 	public NewsController(NewsService newsService) {
