@@ -1,6 +1,7 @@
 package com.stackroute.newz.service;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +29,6 @@ public class NewsSourceServiceImpl implements NewsSourceService {
 	 * (Use Constructor-based autowiring) Please note that we should not create any
 	 * object using the new keyword.
 	 */
-	@Autowired
 	private NewsSourceRepository newsSourceRepo;
 	@Autowired
 	public NewsSourceServiceImpl(NewsSourceRepository repo) {
@@ -40,9 +40,12 @@ public class NewsSourceServiceImpl implements NewsSourceService {
 	 */
 	@Override
 	public boolean addNewsSource(NewsSource newsSource) {
+		NewsSource newsSourceAdded;
 		if(newsSourceRepo.existsById(newsSource.getNewsSourceId()) == false) {
-			newsSourceRepo.save(newsSource);
-			return true;
+			newsSourceAdded = newsSourceRepo.insert(newsSource);
+			if(newsSourceAdded != null) {
+				return true;
+			}
 		}
 		return false;
 	}
@@ -51,7 +54,8 @@ public class NewsSourceServiceImpl implements NewsSourceService {
 
 	@Override
 	public boolean deleteNewsSource(int newsSourceId) {
-		if(newsSourceRepo.existsById(newsSourceId) == true) {
+		NewsSource newsSource = newsSourceRepo.findById(newsSourceId).get();
+		if(newsSource != null) {
 			newsSourceRepo.deleteById(newsSourceId);
 			return true;
 		}
@@ -62,12 +66,13 @@ public class NewsSourceServiceImpl implements NewsSourceService {
 	
 	@Override
 	public NewsSource updateNewsSource(NewsSource newsSource, int newsSourceId) throws NewsSourceNotFoundException {
-		if(newsSourceRepo.existsById(newsSourceId) == true) {
-			Optional<NewsSource> newsSourceToUpdate = newsSourceRepo.findById(newsSourceId);
-			newsSourceToUpdate.get().setNewsSourceCreatedBy(newsSource.getNewsSourceCreatedBy());
-			newsSourceToUpdate.get().setNewsSourceDesc(newsSource.getNewsSourceDesc());
-			newsSourceToUpdate.get().setNewsSourceName(newsSource.getNewsSourceName());
-			return newsSourceRepo.save(newsSourceToUpdate.get());
+		NewsSource newsSourceToUpdate = newsSourceRepo.findById(newsSourceId).get();
+		if(newsSourceToUpdate != null) {
+			newsSourceToUpdate.setNewsSourceCreatedBy(newsSource.getNewsSourceCreatedBy());
+			newsSourceToUpdate.setNewsSourceDesc(newsSource.getNewsSourceDesc());
+			newsSourceToUpdate.setNewsSourceName(newsSource.getNewsSourceName());
+			newsSourceRepo.save(newsSourceToUpdate);
+			return newsSourceToUpdate;
 		}
 		throw new NewsSourceNotFoundException("Can not Update the News Source. The news source with ID: "+newsSourceId+" already exists in the database.");
 	}
@@ -76,11 +81,19 @@ public class NewsSourceServiceImpl implements NewsSourceService {
 
 	@Override
 	public NewsSource getNewsSourceById(String userId, int newsSourceId) throws NewsSourceNotFoundException {
-		if(newsSourceRepo.existsById(newsSourceId) == true) {
-			Optional<NewsSource> newsSource = newsSourceRepo.findById(newsSourceId);
-			return newsSource.get();
+		try {
+		List<NewsSource> newsSourceList = newsSourceRepo.findAllNewsSourceByNewsSourceCreatedBy(userId);
+		if(!newsSourceList.isEmpty()) {
+			for(NewsSource newsSource : newsSourceList) {
+				if(newsSource.getNewsSourceId() == newsSourceId) {
+					return newsSource;
+				}
+			}
+		}}
+		catch(NoSuchElementException e) {
+			return null;
 		}
-		throw new NewsSourceNotFoundException("Can not Delete the News Source. The news source with ID: "+newsSourceId +" already exists in the database.");
+		return null;
 	}
 	
 	 /* This method should be used to get all newsSource for a specific userId.*/

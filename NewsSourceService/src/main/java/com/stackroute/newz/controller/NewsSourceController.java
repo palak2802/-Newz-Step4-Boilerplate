@@ -37,7 +37,6 @@ public class NewsSourceController {
 	 * autowiring) Please note that we should not create any object using the new
 	 * keyword
 	 */
-	@Autowired
 	private NewsSourceService newsSourceService;
 	@Autowired
 	public NewsSourceController(NewsSourceService newsSourceService) {
@@ -59,15 +58,13 @@ public class NewsSourceController {
 	 */
 	@PostMapping
 	public ResponseEntity<NewsSource> createNewsSource(@RequestBody NewsSource newsSource){
-		for(NewsSource allNewsSource: newsSourceService.getAllNewsSourceByUserId(newsSource.getNewsSourceName())) {
-			if(allNewsSource.getNewsSourceId() == allNewsSource.getNewsSourceId()) {
-				logger.info("In controller - {}", "News ID "+ allNewsSource.getNewsSourceId() + " already exists.");
-				return new ResponseEntity<NewsSource>(HttpStatus.CONFLICT);
-			}
+		Boolean isNewsSourceAdded = newsSourceService.addNewsSource(newsSource);
+		if(isNewsSourceAdded == true) {
+			logger.info("In controller - {}", "News Source created: " +newsSource);
+			return new ResponseEntity<NewsSource>(newsSource, HttpStatus.CREATED);
 		}
-		newsSourceService.addNewsSource(newsSource);
-		logger.info("In controller - {}", "News Source created: " +newsSource);
-		return new ResponseEntity<NewsSource>(newsSource, HttpStatus.CREATED);
+		logger.info("In controller - {}", "News ID "+ newsSource.getNewsSourceId() + " already exists.");
+		return new ResponseEntity<NewsSource>(HttpStatus.CONFLICT);
 	}
 
 

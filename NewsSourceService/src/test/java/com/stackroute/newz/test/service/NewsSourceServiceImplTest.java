@@ -57,8 +57,6 @@ public class NewsSourceServiceImplTest {
         when(newsSourceRepository.insert(newsSource)).thenReturn(newsSource);
         boolean savedNewssource = newsSourceServiceImpl.addNewsSource(newsSource);
         assertThat(savedNewssource,is(true));
-
-
     }
     
     @Test
@@ -67,7 +65,6 @@ public class NewsSourceServiceImplTest {
         when(newsSourceRepository.insert(newsSource)).thenReturn(null);
         boolean savedNewssource = newsSourceServiceImpl.addNewsSource(newsSource);
         assertThat(savedNewssource, is(false));
-
     }
 
     @Test
@@ -123,7 +120,6 @@ public class NewsSourceServiceImplTest {
     	when(newsSourceRepository.findAllNewsSourceByNewsSourceCreatedBy("Becky123")).thenThrow(NoSuchElementException.class);
     	NewsSource fetchedNewssource = newsSourceServiceImpl.getNewsSourceById(newsSource.getNewsSourceCreatedBy(),newsSource.getNewsSourceId());
         assertNull(fetchedNewssource);
-
     }
 
 
