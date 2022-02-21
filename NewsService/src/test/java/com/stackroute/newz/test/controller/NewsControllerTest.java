@@ -93,7 +93,6 @@ class NewsControllerTest {
 
     }
 
-
     @Test
     public void addNewsSuccess() throws Exception {
     	
@@ -101,13 +100,10 @@ class NewsControllerTest {
     	System.out.println("test.............");
 		mockMvc.perform(post("/api/v1/news").contentType(MediaType.APPLICATION_JSON).content(asJsonString(news)))
 		.andExpect(status().isCreated()).andDo(MockMvcResultHandlers.print());
-
-
     }
 
-
     @Test
-    public void addNewsFailure() throws Exception {	//fail
+    public void addNewsFailure() throws Exception {
         when(newsService.addNews(any())).thenReturn(false);
         mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/news").contentType(MediaType.APPLICATION_JSON)
                 .content(asJsonString(news)))
@@ -116,9 +112,8 @@ class NewsControllerTest {
 
     }
 
-
     @Test
-    public void deleteNewsSuccess() throws Exception {	//fail
+    public void deleteNewsSuccess() throws Exception {
 
         when(newsService.deleteNews("Becky123", news.getNewsId())).thenReturn(true);
         mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/news/Becky123/1")
@@ -126,7 +121,6 @@ class NewsControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andDo(MockMvcResultHandlers.print());
     }
-
 
     @Test
     public void deleteNewsFailure() throws Exception {
@@ -151,7 +145,7 @@ class NewsControllerTest {
     }
 
     @Test
-    public void deleteAllNewsFailure() throws Exception {	//error
+    public void deleteAllNewsFailure() throws Exception {
 
         when(newsService.deleteAllNews("Becky123")).thenThrow(NewsNotFoundException.class);
         mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/news/Becky123")
@@ -163,7 +157,7 @@ class NewsControllerTest {
 
 
     @Test
-    public void updateNewsSuccess() throws Exception {	//fail
+    public void updateNewsSuccess() throws Exception {
 
         when(newsService.updateNews(any(), eq(news.getNewsId()), eq("Becky123"))).thenReturn(news);
         news.setContent("Mumbai Indians vs RCB match scheduled  for 6 PM");
@@ -200,7 +194,7 @@ class NewsControllerTest {
 
 
     @Test
-    public void getNewsByIdFailure() throws Exception {	//error
+    public void getNewsByIdFailure() throws Exception {
 
         when(newsService.getNewsByNewsId("Becky123", 1)).thenThrow(NewsNotFoundException.class);
         mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/news/Becky123/1")

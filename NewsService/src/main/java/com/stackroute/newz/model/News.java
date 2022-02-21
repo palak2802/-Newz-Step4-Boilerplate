@@ -5,6 +5,9 @@ import java.time.LocalDateTime;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+
 @Document
 public class News {
 	
@@ -21,6 +24,7 @@ public class News {
 	private String title;
 	private String author;
 	private String description;
+	@JsonSerialize(using = ToStringSerializer.class)
 	private LocalDateTime publishedAt;
 	private String content;
 	private String url;

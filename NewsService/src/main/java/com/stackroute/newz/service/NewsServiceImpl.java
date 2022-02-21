@@ -46,35 +46,22 @@ public class NewsServiceImpl implements NewsService {
 	/*
 	 * This method should be used to save a new news.
 	 */
+	
 	@Override
 	public boolean addNews(News news){
-		UserNews user = null;
-		List<UserNews> userNewsList = newsRepo.findAll();
-		List<News> newsList = null;
-		if(userNewsList == null) {
-			return false;
-		}
-		if(userNewsList.isEmpty()) {
-			user = new UserNews();
-			newsList = new ArrayList<News>();
-			newsList.add(news);
-			user.setNewslist(newsList);
-			newsRepo.save(user);
-			return true;
-		}else {
-			for(UserNews userNews: userNewsList) {
-				newsList = userNews.getNewslist();
-				for(News newsWithId: newsList) {
-					if(newsWithId.getNewsId().equals(news.getNewsId())) {
-						return false;
-					}else {
-						newsList.add(news);
-						userNews.setNewslist(newsList);
-						newsRepo.save(userNews);
-						return true;
-					}	
-				}
-			}}
+		Boolean isExistsUserNews = newsRepo.existsById(news.getAuthor());
+		if(isExistsUserNews == false) {
+			List<News> newsList = new ArrayList<News>();
+			UserNews userNews = new UserNews();
+				newsList.add(news);
+				userNews.setUserId(news.getAuthor());
+				userNews.setNewslist(newsList);
+				UserNews userAdded = newsRepo.insert(userNews);
+				if(userAdded != null)
+					return true;
+				else
+					return false;
+			}
 		return false;
 	}
 

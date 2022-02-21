@@ -85,17 +85,14 @@ public class NewsSourceController {
 	 * 
 	 */
 	@DeleteMapping("/{newssourceId}")
-	public ResponseEntity<NewsSource> deleteNewsSource(@PathVariable("newssourceId") Integer newssourceId) throws NewsSourceNotFoundException{
-			NewsSource getNewsSource = newsSourceService.getNewsSourceById(newssourceId.toString(), newssourceId);
-			if(getNewsSource != null) {
-				newsSourceService.deleteNewsSource(newssourceId);
-				logger.info("In controller - {}", "News Source deleted for Id - " +newssourceId);
-				return new ResponseEntity<NewsSource>(HttpStatus.OK);
-			}
-			else {
-			logger.info("In controller - {}", "News not found for news Id - " +newssourceId);
-			return new ResponseEntity<NewsSource>(HttpStatus.NOT_FOUND);
-			}
+	public ResponseEntity<NewsSource> deleteNewsSource(@PathVariable("newssourceId") Integer newssourceId){
+		boolean newsSourceDeleted = newsSourceService.deleteNewsSource(newssourceId);
+		if(newsSourceDeleted == true) {
+			logger.info("In controller - {}", "News Source deleted for Id - " +newssourceId);
+			return new ResponseEntity<NewsSource>(HttpStatus.OK);
+		}
+		logger.info("In controller - {}", "News not found for news Id - " +newssourceId);
+		return new ResponseEntity<NewsSource>(HttpStatus.NOT_FOUND);
 	}
 
 	/*
@@ -112,16 +109,20 @@ public class NewsSourceController {
 	 * 
 	 */
 	@PutMapping("/{newssourceId}")
-	public ResponseEntity<NewsSource> updateNewsSource(@PathVariable("newssourceId") Integer newssourceId, @RequestBody NewsSource newsSource) throws NewsSourceNotFoundException {
-			NewsSource getNewsSource = newsSourceService.getNewsSourceById(newssourceId.toString(), newssourceId);
-			if(getNewsSource != null) {
-				NewsSource updateNewsSource = newsSourceService.updateNewsSource(newsSource, newssourceId);
+	public ResponseEntity<NewsSource> updateNewsSource(@PathVariable("newssourceId") Integer newssourceId, @RequestBody NewsSource newsSource){
+		NewsSource updateNewsSource;
+		try {
+			updateNewsSource = newsSourceService.updateNewsSource(newsSource, newssourceId);
+			if(updateNewsSource != null) {
 				logger.info("In controller - {}", "News updated for news Id - " +newssourceId + " is: " +updateNewsSource);
 				return new ResponseEntity<NewsSource>(updateNewsSource, HttpStatus.OK);
-			}else {
-				logger.info("In controller - {}", "News Source not found for Id - " +newssourceId);
-				return new ResponseEntity<NewsSource>(HttpStatus.NOT_FOUND);
 			}
+		} catch (NewsSourceNotFoundException e) {
+			logger.info("In controller - {}", "News Source not found for Id - " +newssourceId);
+			return new ResponseEntity<NewsSource>(HttpStatus.NOT_FOUND);
+		}
+		logger.info("In controller - {}", "News Source not found for Id - " +newssourceId);
+		return new ResponseEntity<NewsSource>(HttpStatus.NOT_FOUND);
 	}
 	
 	/*
@@ -137,16 +138,20 @@ public class NewsSourceController {
 	 * 
 	 */
 	@GetMapping("/{userId}/{newssourceId}")
-	public ResponseEntity<NewsSource> getNewsSourceById(@PathVariable("userId") String userId, @PathVariable("newssourceId") Integer newssourceId) throws NewsSourceNotFoundException{
-		NewsSource newsSourceById = newsSourceService.getNewsSourceById(userId, newssourceId);
-		if(newsSourceById == null) {
+	public ResponseEntity<NewsSource> getNewsSourceById(@PathVariable("userId") String userId, @PathVariable("newssourceId") Integer newssourceId){
+		NewsSource newsSourceById;
+		try {
+			newsSourceById = newsSourceService.getNewsSourceById(userId, newssourceId);
+			if(newsSourceById != null) {
+				logger.info("In controller - {}", "The news Source for Id - " +newssourceId+ " is: "+newsSourceById);
+				return new ResponseEntity<NewsSource>(newsSourceById, HttpStatus.OK);
+			}
+		} catch (NewsSourceNotFoundException e) {
 			logger.info("In controller - {}", "News Source ID "+newssourceId+ " not Found.");
 			return new ResponseEntity<NewsSource>(HttpStatus.NOT_FOUND);
 		}
-		else {
-			logger.info("In controller - {}", "The news Source for Id - " +newssourceId+ " is: "+newsSourceById);
-			return new ResponseEntity<NewsSource>(newsSourceById, HttpStatus.OK);
-		}
+		logger.info("In controller - {}", "News Source ID "+newssourceId+ " not Found.");
+		return new ResponseEntity<NewsSource>(HttpStatus.NOT_FOUND);
 	}
 	
 	/*

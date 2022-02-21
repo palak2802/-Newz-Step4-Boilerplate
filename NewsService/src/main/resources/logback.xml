@@ -25,11 +25,11 @@
 		</encoder>
 	</appender>
 	<!-- Send logs to both console and file audit -->
-	<logger name="com.stackroute" level="warn" additivity="false">
+	<logger name="com.stackroute" level="error" additivity="false">
 		<appender-ref ref="FILE-AUDIT" />
 		<appender-ref ref="STDOUT" />
 	</logger>
-	<root level="WARN">
+	<root level="ERROR">
 		<appender-ref ref="FILE-AUDIT" />
 		<appender-ref ref="STDOUT" />
 	</root>

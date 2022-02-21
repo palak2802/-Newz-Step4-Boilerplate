@@ -5,6 +5,9 @@ import java.time.LocalDateTime;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+
 /*
  * Please note that this class is annotated with @Document annotation
  * @Document identifies a domain object to be persisted to MongoDB.
@@ -27,6 +30,7 @@ public class NewsSource {
 	private String newsSourceName;
 	private String newsSourceDesc;
 	private String newsSourceCreatedBy;
+	@JsonSerialize(using = ToStringSerializer.class)
 	private LocalDateTime newsSourceCreationDate;
 	
 	public NewsSource() {
