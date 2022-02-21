@@ -3,7 +3,6 @@ package com.stackroute.newz.service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -11,7 +10,6 @@ import org.springframework.stereotype.Service;
 import com.stackroute.newz.model.News;
 import com.stackroute.newz.model.UserNews;
 import com.stackroute.newz.repository.NewsRepository;
-import com.stackroute.newz.util.exception.NewsAlreadyExistsException;
 import com.stackroute.newz.util.exception.NewsNotFoundException;
 
 /*
@@ -35,9 +33,6 @@ public class NewsServiceImpl implements NewsService {
 	
 	private NewsRepository newsRepo;
 	
-	public NewsServiceImpl() {
-	}
-	
 	@Autowired
 	public NewsServiceImpl(NewsRepository newsRepository) {
 		this.newsRepo = newsRepository;
@@ -57,10 +52,9 @@ public class NewsServiceImpl implements NewsService {
 				userNews.setUserId(news.getAuthor());
 				userNews.setNewslist(newsList);
 				UserNews userAdded = newsRepo.insert(userNews);
-				if(userAdded != null)
+				if(userAdded != null) {
 					return true;
-				else
-					return false;
+				}
 			}
 		return false;
 	}

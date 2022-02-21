@@ -5,7 +5,6 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -18,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.stackroute.newz.model.News;
-import com.stackroute.newz.model.UserNews;
 import com.stackroute.newz.service.NewsService;
 import com.stackroute.newz.util.exception.NewsNotFoundException;
 
@@ -40,7 +38,7 @@ public class NewsController {
 	 * keyword
 	 */
 	@Autowired
-	private NewsService newsService;
+	private final NewsService newsService;
 	
 	@Autowired
 	public NewsController(NewsService newsService) {

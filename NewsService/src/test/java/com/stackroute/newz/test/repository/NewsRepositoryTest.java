@@ -33,7 +33,7 @@ public class NewsRepositoryTest {
     private UserNews userNews = new UserNews();
     
     private List<News> newsList = null;
-
+    private static final int NEWS_ID = 1;
 
     @BeforeEach
     public void setUp() throws Exception {
@@ -75,7 +75,7 @@ public class NewsRepositoryTest {
     }
 
     @Test
-    public void AddNewsTest() {
+    public void addNewsTest() {
     	newsRepository.insert(userNews);
         List<News> allNews = newsRepository.findById("Becky123").get().getNewslist();
         assertThat(newsList.get(0).getNewsId(), is(allNews.get(0).getNewsId()));
@@ -90,8 +90,9 @@ public class NewsRepositoryTest {
         Iterator<News> iterator = allNews.listIterator();
         while (iterator.hasNext()) {
             news = iterator.next();
-            if (news.getNewsId() == 1)
+            if (news.getNewsId() == NEWS_ID) {
                 iterator.remove();
+            }
         }
 
         userNews.setNewslist(allNews);
@@ -113,8 +114,9 @@ public class NewsRepositoryTest {
         Iterator<News> iterator = allNews.listIterator();
         while (iterator.hasNext()) {
             news = iterator.next();
-            if (news.getNewsId() == 1)
+            if (news.getNewsId() == NEWS_ID) {
                 news.setContent("CSK vs RCB match scheduled  for 4 PM is cancelled");
+            }
         }
         userNews.setNewslist(allNews);
         newsRepository.save(userNews);

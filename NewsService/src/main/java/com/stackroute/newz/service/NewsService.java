@@ -13,16 +13,16 @@ public interface NewsService {
 	 * corresponding Impl classes
 	 */
 
-	public boolean addNews(News news);
+	boolean addNews(News news);
 
-	public boolean deleteNews(String userId, int newsId);
+	boolean deleteNews(String userId, int newsId);
 
-	public boolean deleteAllNews(String userId) throws NewsNotFoundException;
+	boolean deleteAllNews(String userId) throws NewsNotFoundException;
 
-	public News updateNews(News news, int id, String userId) throws NewsNotFoundException;
+	News updateNews(News news, int newsId, String userId) throws NewsNotFoundException;
 
-	public News getNewsByNewsId(String userId, int newsId) throws NewsNotFoundException;
+	News getNewsByNewsId(String userId, int newsId) throws NewsNotFoundException;
 
-	public List<News> getAllNewsByUserId(String userId);
+	List<News> getAllNewsByUserId(String userId);
 
 }
