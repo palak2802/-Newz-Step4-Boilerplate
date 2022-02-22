@@ -54,10 +54,16 @@ public class NewsSourceServiceImpl implements NewsSourceService {
 
 	@Override
 	public boolean deleteNewsSource(int newsSourceId) {
-		NewsSource newsSource = newsSourceRepo.findById(newsSourceId).get();
-		if(newsSource != null) {
+		try {
+		Optional<NewsSource> newsSource = newsSourceRepo.findById(newsSourceId);
+		NewsSource newsSourceAdded = newsSourceRepo.save(newsSource.get());
+		if(newsSourceAdded != null) {
 			newsSourceRepo.deleteById(newsSourceId);
 			return true;
+			}
+		}
+		catch(Exception e) {
+			return false;
 		}
 		return false;
 	}
